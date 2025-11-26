@@ -42,7 +42,8 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
     const inputRef = React.useRef<HTMLInputElement>(null)
     const [displayValue, setDisplayValue] = React.useState<string>("")
     const [isFocused, setIsFocused] = React.useState(false)
-    const currencyInputId = id || React.useId()
+    const generatedId = React.useId()
+    const currencyInputId = id || generatedId
 
     // Merge refs
     const combinedRef = React.useCallback(

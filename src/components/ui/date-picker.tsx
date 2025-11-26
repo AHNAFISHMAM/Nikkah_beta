@@ -15,7 +15,8 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
     const inputRef = React.useRef<HTMLInputElement>(null)
     const buttonRef = React.useRef<HTMLButtonElement>(null)
     const [isFocused, setIsFocused] = React.useState(false)
-    const datePickerId = id || React.useId()
+    const generatedId = React.useId()
+    const datePickerId = id || generatedId
     const helperId = helperText ? `${datePickerId}-helper` : undefined
     
     // Merge refs properly

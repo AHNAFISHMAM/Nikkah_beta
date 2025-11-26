@@ -24,7 +24,8 @@ export function FormField({
   children,
   className
 }: FormFieldProps) {
-  const id = htmlFor || React.useId()
+  const generatedId = React.useId()
+  const id = htmlFor || generatedId
 
   return (
     <div className={cn("space-y-2", className)}>

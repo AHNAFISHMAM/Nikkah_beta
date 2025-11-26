@@ -41,7 +41,7 @@ if (!remoteUrl) {
 log(`\n🔗 Remote: ${remoteUrl}`, 'cyan');
 
 // Extract repo info
-const match = remoteUrl.match(/github\.com[\/:]([\w-]+)\/([\w-]+)/);
+const match = remoteUrl.match(/github\.com[/:]([\w-]+)\/([\w-]+)/);
 if (!match) {
   log('❌ Invalid GitHub remote URL', 'red');
   process.exit(1);

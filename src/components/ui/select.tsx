@@ -13,7 +13,8 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, error, success, helperText, children, id, ...props }, ref) => {
     const [isFocused, setIsFocused] = React.useState(false)
     const [hasValue, setHasValue] = React.useState(false)
-    const selectId = id || React.useId()
+    const generatedId = React.useId()
+    const selectId = id || generatedId
     const helperId = helperText ? `${selectId}-helper` : undefined
 
     React.useEffect(() => {
