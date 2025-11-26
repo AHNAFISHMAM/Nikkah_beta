@@ -1,0 +1,10 @@
+# NikahPrep Robots.txt
+# https://www.robotstxt.org/
+
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /profile-setup
+
+# Sitemap (uncomment and update with your domain when deployed)
+# Sitemap: https://YOUR_DOMAIN/sitemap.xml

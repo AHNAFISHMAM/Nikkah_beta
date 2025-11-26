@@ -1,0 +1,10 @@
+export const CACHE_DURATIONS = {
+  DASHBOARD: 30,
+  MODULES: 60,
+  RESOURCES: 300,
+}
+
+export const DEFAULTS = {
+  TOTAL_CHECKLIST_ITEMS: 27,
+  TOTAL_MODULES: 5,
+}
