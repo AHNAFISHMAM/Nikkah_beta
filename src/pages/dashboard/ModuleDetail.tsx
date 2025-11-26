@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { SEO } from '../../components/SEO'
@@ -298,260 +299,649 @@ export default function ModuleDetailPage() {
       />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link to="/dashboard/modules">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
+      <motion.div
+        className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0 }}
+      >
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <Button variant="ghost" size="icon" asChild>
+            <Link to="/dashboard/modules">
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+          </Button>
+        </motion.div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
+          <motion.div
+            className="flex items-center gap-2 mb-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
+          >
             <h1 className="text-2xl sm:text-3xl font-bold">{module.title}</h1>
-        {isCompleted && (
-          <div className="flex items-center gap-1.5 text-success bg-success/10 px-3 py-1.5 rounded-lg">
-            <CheckCircle className="h-5 w-5" />
-            <span className="text-sm font-medium">Completed</span>
-          </div>
-        )}
-          </div>
-          <p className="text-sm sm:text-base text-muted-foreground">{module.description}</p>
+            <AnimatePresence>
+              {isCompleted && (
+                <motion.div
+                  className="flex items-center gap-1.5 text-success bg-success/10 px-3 py-1.5 rounded-lg"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                  >
+                    <CheckCircle className="h-5 w-5" />
+                  </motion.div>
+                  <span className="text-sm font-medium">Completed</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+          <motion.p
+            className="text-sm sm:text-base text-muted-foreground"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.5 }}
+          >
+            {module.description}
+          </motion.p>
           {moduleMetadata && (
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-3">
-              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+            <motion.div
+              className="flex flex-wrap items-center gap-3 sm:gap-4 mt-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.7 }}
+            >
+              <motion.div
+                className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground"
+                whileHover={{ scale: 1.05 }}
+              >
                 <Clock className="h-4 w-4" />
                 <span>Est. {moduleMetadata.estimatedTime}</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+              </motion.div>
+              <motion.div
+                className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground"
+                whileHover={{ scale: 1.05 }}
+              >
                 <BookOpen className="h-4 w-4" />
                 <span>Module {module.order_index}</span>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           )}
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownloadPDF}
-            disabled={isGeneratingPDF}
-            className="print:hidden"
+        <motion.div
+          className="flex gap-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.4 }}
+        >
+          <motion.div
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Download className="h-4 w-4 mr-2" />
-            {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handlePrint}
-            className="print:hidden"
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+              className="print:hidden"
+            >
+              <motion.div
+                className="flex items-center"
+                animate={isGeneratingPDF ? { rotate: 360 } : {}}
+                transition={isGeneratingPDF ? { duration: 1, repeat: Infinity, ease: 'linear' } : {}}
+              >
+                <Download className="h-4 w-4 mr-2" />
+              </motion.div>
+              {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
+            </Button>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Printer className="h-4 w-4 mr-2" />
-            Print
-          </Button>
-        </div>
-      </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrint}
+              className="print:hidden"
+            >
+              <Printer className="h-4 w-4 mr-2" />
+              Print
+            </Button>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* Progress Indicator */}
-      {!isCompleted && (
-        <Card className="print:hidden">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Reading Progress</span>
-              <span className="text-sm text-muted-foreground">{readingProgress}%</span>
-            </div>
-            <Progress value={readingProgress} variant="islamic" size="sm" />
-            <p className="text-xs text-muted-foreground mt-2">
-              Mark as complete when you finish reading
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      <AnimatePresence>
+        {!isCompleted && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30, height: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="print:hidden"
+          >
+            <Card>
+              <CardContent className="p-4">
+                <motion.div
+                  className="flex items-center justify-between mb-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  <span className="text-sm font-medium">Reading Progress</span>
+                  <motion.span
+                    className="text-sm text-muted-foreground"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: 0.4 }}
+                  >
+                    {readingProgress}%
+                  </motion.span>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scaleX: 0 }}
+                  animate={{ opacity: 1, scaleX: 1 }}
+                  transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+                >
+                  <Progress value={readingProgress} variant="islamic" size="sm" />
+                </motion.div>
+                <motion.p
+                  className="text-xs text-muted-foreground mt-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                >
+                  Mark as complete when you finish reading
+                </motion.p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Learning Objectives */}
       {moduleMetadata && moduleMetadata.learningObjectives.length > 0 && (
-        <Card className="print:hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Target className="h-5 w-5 text-primary" />
-              Learning Objectives
-            </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
-              What you'll learn from this module
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {moduleMetadata.learningObjectives.map((objective, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm">
-                  <CheckCircle className="h-4 w-4 text-success mt-0.5 shrink-0" />
-                  <span>{objective}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3, margin: '0px' }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+          className="print:hidden"
+        >
+          <Card>
+            <CardHeader className="pb-3">
+              <motion.div
+                className="text-base sm:text-lg flex items-center gap-2"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.2, rotate: 5 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
+                  <Target className="h-5 w-5 text-primary" />
+                </motion.div>
+                <CardTitle>Learning Objectives</CardTitle>
+              </motion.div>
+              <CardDescription className="text-xs sm:text-sm">
+                What you'll learn from this module
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <motion.ul
+                className="space-y-2"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1,
+                      delayChildren: 0.2,
+                    },
+                  },
+                }}
+              >
+                {moduleMetadata.learningObjectives.map((objective, index) => (
+                  <motion.li
+                    key={index}
+                    className="flex items-start gap-2 text-sm"
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0 },
+                    }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    whileHover={{ x: 5 }}
+                  >
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: index * 0.1 + 0.3 }}
+                    >
+                      <CheckCircle className="h-4 w-4 text-success mt-0.5 shrink-0" />
+                    </motion.div>
+                    <span>{objective}</span>
+                  </motion.li>
+                ))}
+              </motion.ul>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
       {/* Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            Module Content
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div
-            className="prose prose-sm sm:prose-base max-w-none dark:prose-invert prose-headings:font-semibold prose-p:leading-relaxed prose-ul:my-4 prose-ol:my-4"
-            dangerouslySetInnerHTML={{ __html: module.content || 'No content available.' }}
-          />
-        </CardContent>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.1, margin: '-150px 0px 0px 0px' }}
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 }}
+      >
+        <Card>
+          <CardHeader>
+            <motion.div
+              className="flex items-center gap-2"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.1, margin: '-150px 0px 0px 0px' }}
+              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.2, rotate: 5 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                <BookOpen className="h-5 w-5" />
+              </motion.div>
+              <CardTitle>Module Content</CardTitle>
+            </motion.div>
+          </CardHeader>
+          <CardContent>
+            <motion.div
+              className="prose prose-sm sm:prose-base max-w-none dark:prose-invert prose-headings:font-semibold prose-p:leading-relaxed prose-ul:my-4 prose-ol:my-4"
+              dangerouslySetInnerHTML={{ __html: module.content || 'No content available.' }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.1, margin: '-150px 0px 0px 0px' }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            />
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Key Takeaways */}
       {moduleMetadata && moduleMetadata.keyTakeaways.length > 0 && (
-        <Card className="print:hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Lightbulb className="h-5 w-5 text-warning" />
-              Key Takeaways
-            </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
-              Important points to remember
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {moduleMetadata.keyTakeaways.map((takeaway, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm">
-                  <div className="h-1.5 w-1.5 rounded-full bg-warning mt-2 shrink-0" />
-                  <span>{takeaway}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3, margin: '0px' }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+          className="print:hidden"
+        >
+          <Card>
+            <CardHeader className="pb-3">
+              <motion.div
+                className="text-base sm:text-lg flex items-center gap-2"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, repeatDelay: 5 }}
+                >
+                  <Lightbulb className="h-5 w-5 text-warning" />
+                </motion.div>
+                <CardTitle>Key Takeaways</CardTitle>
+              </motion.div>
+              <CardDescription className="text-xs sm:text-sm">
+                Important points to remember
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <motion.ul
+                className="space-y-2"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1,
+                      delayChildren: 0.2,
+                    },
+                  },
+                }}
+              >
+                {moduleMetadata.keyTakeaways.map((takeaway, index) => (
+                  <motion.li
+                    key={index}
+                    className="flex items-start gap-2 text-sm"
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0 },
+                    }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    whileHover={{ x: 5 }}
+                  >
+                    <motion.div
+                      className="h-1.5 w-1.5 rounded-full bg-warning mt-2 shrink-0"
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: index * 0.1 + 0.3 }}
+                      animate={{ scale: [1, 1.3, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 3, delay: index * 0.2 }}
+                    />
+                    <span>{takeaway}</span>
+                  </motion.li>
+                ))}
+              </motion.ul>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
       {/* Reflection Questions */}
       {moduleMetadata && moduleMetadata.reflectionQuestions.length > 0 && (
-        <Card className="print:hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              Reflection Questions
-            </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
-              Take time to reflect on these questions. Consider discussing them with your partner.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {moduleMetadata.reflectionQuestions.map((question, index) => (
-              <div key={index} className="space-y-2">
-                <p className="text-sm font-medium">
-                  {index + 1}. {question}
-                </p>
-                <Textarea
-                  placeholder="Write your thoughts here..."
-                  value={reflectionAnswers[index] || ''}
-                  onChange={(e) => setReflectionAnswers(prev => ({ ...prev, [index]: e.target.value }))}
-                  className="min-h-[80px] text-sm"
-                />
-              </div>
-            ))}
-            {Object.keys(reflectionAnswers).length > 0 && (
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    // Save reflection answers to notes
-                    const reflectionText = moduleMetadata.reflectionQuestions
-                      .map((q, i) => `Q${i + 1}: ${q}\nA: ${reflectionAnswers[i] || 'Not answered'}\n`)
-                      .join('\n')
-                    const newNotes = notes ? `${notes}\n\n--- Reflection Answers ---\n${reflectionText}` : `--- Reflection Answers ---\n${reflectionText}`
-                    setNotes(newNotes)
-                    // Auto-save to database
-                    saveMutation.mutate({})
-                    toast.success('Reflection answers added to notes and saved!')
-                  }}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3, margin: '0px' }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+          className="print:hidden"
+        >
+          <Card>
+            <CardHeader className="pb-3">
+              <motion.div
+                className="text-base sm:text-lg flex items-center gap-2"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.2, rotate: 5 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 >
-                  Add to Notes & Save
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setReflectionAnswers({})
-                    toast.success('Reflection answers cleared')
-                  }}
-                >
-                  Clear
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  <FileText className="h-5 w-5 text-primary" />
+                </motion.div>
+                <CardTitle>Reflection Questions</CardTitle>
+              </motion.div>
+              <CardDescription className="text-xs sm:text-sm">
+                Take time to reflect on these questions. Consider discussing them with your partner.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.15,
+                      delayChildren: 0.2,
+                    },
+                  },
+                }}
+              >
+                {moduleMetadata.reflectionQuestions.map((question, index) => (
+                  <motion.div
+                    key={index}
+                    className="space-y-2"
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 },
+                    }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                  >
+                    <motion.p
+                      className="text-sm font-medium"
+                      whileHover={{ x: 5 }}
+                    >
+                      {index + 1}. {question}
+                    </motion.p>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.15 + 0.3 }}
+                    >
+                      <Textarea
+                        placeholder="Write your thoughts here..."
+                        value={reflectionAnswers[index] || ''}
+                        onChange={(e) => setReflectionAnswers(prev => ({ ...prev, [index]: e.target.value }))}
+                        className="min-h-[80px] text-sm"
+                      />
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </motion.div>
+              <AnimatePresence>
+                {Object.keys(reflectionAnswers).length > 0 && (
+                  <motion.div
+                    className="flex gap-2"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          // Save reflection answers to notes
+                          const reflectionText = moduleMetadata.reflectionQuestions
+                            .map((q, i) => `Q${i + 1}: ${q}\nA: ${reflectionAnswers[i] || 'Not answered'}\n`)
+                            .join('\n')
+                          const newNotes = notes ? `${notes}\n\n--- Reflection Answers ---\n${reflectionText}` : `--- Reflection Answers ---\n${reflectionText}`
+                          setNotes(newNotes)
+                          // Auto-save to database
+                          saveMutation.mutate({})
+                          toast.success('Reflection answers added to notes and saved!')
+                        }}
+                      >
+                        Add to Notes & Save
+                      </Button>
+                    </motion.div>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setReflectionAnswers({})
+                          toast.success('Reflection answers cleared')
+                        }}
+                      >
+                        Clear
+                      </Button>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
       {/* Related Resources Suggestion */}
-      <Card className="print:hidden bg-primary/5 border-primary/20">
-        <CardContent className="p-4 sm:p-6">
-          <div className="flex items-start gap-3">
-            <BookOpen className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-            <div className="flex-1">
-              <h3 className="font-semibold text-sm sm:text-base mb-1">Want to Learn More?</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground mb-3">
-                Explore our curated resources library for additional books, lectures, and Islamic guidance on marriage.
-              </p>
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/dashboard/resources">
-                  Browse Resources
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3, margin: '0px' }}
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+        className="print:hidden"
+      >
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="p-4 sm:p-6">
+            <motion.div
+              className="flex items-start gap-3"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.2, rotate: 5 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                <BookOpen className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+              </motion.div>
+              <div className="flex-1">
+                <motion.h3
+                  className="font-semibold text-sm sm:text-base mb-1"
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  Want to Learn More?
+                </motion.h3>
+                <motion.p
+                  className="text-xs sm:text-sm text-muted-foreground mb-3"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                >
+                  Explore our curated resources library for additional books, lectures, and Islamic guidance on marriage.
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  whileHover={{ scale: 1.05, x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/dashboard/resources">
+                      Browse Resources
+                      <motion.div
+                        className="inline-block"
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                      >
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </motion.div>
+                    </Link>
+                  </Button>
+                </motion.div>
+              </div>
+            </motion.div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Notes */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Your Notes
-          </CardTitle>
-          <CardDescription className="text-xs sm:text-sm">
-            Take notes as you study. These will be included in your PDF summary.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Textarea
-            placeholder="Take notes as you study this module... Your reflections, key points, and questions can go here."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="min-h-[150px] text-sm"
-          />
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Button
-              onClick={() => saveMutation.mutate({})}
-              disabled={saveMutation.isPending}
-              className="flex-1 sm:flex-initial"
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3, margin: '0px' }}
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+      >
+        <Card>
+          <CardHeader>
+            <motion.div
+              className="flex items-center gap-2"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
             >
-              {saveMutation.isPending ? 'Saving...' : 'Save Notes'}
-            </Button>
-            <Button
-              variant={isCompleted ? 'outline' : 'default'}
-              onClick={() => saveMutation.mutate({ isCompleted: !isCompleted })}
-              disabled={saveMutation.isPending}
-              className="flex-1 sm:flex-initial"
+              <motion.div
+                whileHover={{ scale: 1.2, rotate: 5 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                <FileText className="h-5 w-5" />
+              </motion.div>
+              <CardTitle>Your Notes</CardTitle>
+            </motion.div>
+            <CardDescription className="text-xs sm:text-sm">
+              Take notes as you study. These will be included in your PDF summary.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
-              {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+              <Textarea
+                placeholder="Take notes as you study this module... Your reflections, key points, and questions can go here."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="min-h-[150px] text-sm"
+              />
+            </motion.div>
+            <motion.div
+              className="flex flex-col sm:flex-row gap-2"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1 sm:flex-initial"
+              >
+                <Button
+                  onClick={() => saveMutation.mutate({})}
+                  disabled={saveMutation.isPending}
+                  className="flex-1 sm:flex-initial w-full"
+                >
+                  {saveMutation.isPending ? 'Saving...' : 'Save Notes'}
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1 sm:flex-initial"
+              >
+                <Button
+                  variant={isCompleted ? 'outline' : 'default'}
+                  onClick={() => saveMutation.mutate({ isCompleted: !isCompleted })}
+                  disabled={saveMutation.isPending}
+                  className="flex-1 sm:flex-initial w-full"
+                >
+                  {isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
+                </Button>
+              </motion.div>
+            </motion.div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Printable Module Summary (hidden on screen, visible when printing) */}
       <div className="hidden print:block">
@@ -639,34 +1029,68 @@ export default function ModuleDetailPage() {
 
       {/* Navigation to Next/Previous Module */}
       {(nextModule || prevModule) && (
-        <div className="flex flex-col sm:flex-row justify-between gap-4 print:hidden border-t pt-6">
+        <motion.div
+          className="flex flex-col sm:flex-row justify-between gap-4 print:hidden border-t pt-6"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3, margin: '0px' }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+        >
           {prevModule ? (
-            <Button variant="outline" asChild className="flex-1 sm:flex-initial">
-              <Link to={`/dashboard/modules/${prevModule.id}`} className="flex items-center gap-2">
-                <ChevronLeft className="h-4 w-4" />
-                <div className="text-left">
-                  <div className="text-xs text-muted-foreground">Previous Module</div>
-                  <div className="text-sm font-medium line-clamp-1">{prevModule.title}</div>
-                </div>
-              </Link>
-            </Button>
+            <motion.div
+              className="flex-1 sm:flex-initial"
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              whileHover={{ x: -5 }}
+            >
+              <Button variant="outline" asChild className="flex-1 sm:flex-initial w-full">
+                <Link to={`/dashboard/modules/${prevModule.id}`} className="flex items-center gap-2">
+                  <motion.div
+                    animate={{ x: [0, -5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </motion.div>
+                  <div className="text-left">
+                    <div className="text-xs text-muted-foreground">Previous Module</div>
+                    <div className="text-sm font-medium line-clamp-1">{prevModule.title}</div>
+                  </div>
+                </Link>
+              </Button>
+            </motion.div>
           ) : (
             <div className="flex-1 sm:flex-initial" />
           )}
           {nextModule ? (
-            <Button variant="outline" asChild className="flex-1 sm:flex-initial">
-              <Link to={`/dashboard/modules/${nextModule.id}`} className="flex items-center gap-2">
-                <div className="text-right flex-1">
-                  <div className="text-xs text-muted-foreground">Next Module</div>
-                  <div className="text-sm font-medium line-clamp-1">{nextModule.title}</div>
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
+            <motion.div
+              className="flex-1 sm:flex-initial"
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              whileHover={{ x: 5 }}
+            >
+              <Button variant="outline" asChild className="flex-1 sm:flex-initial w-full">
+                <Link to={`/dashboard/modules/${nextModule.id}`} className="flex items-center gap-2">
+                  <div className="text-right flex-1">
+                    <div className="text-xs text-muted-foreground">Next Module</div>
+                    <div className="text-sm font-medium line-clamp-1">{nextModule.title}</div>
+                  </div>
+                  <motion.div
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </motion.div>
+                </Link>
+              </Button>
+            </motion.div>
           ) : (
             <div className="flex-1 sm:flex-initial" />
           )}
-        </div>
+        </motion.div>
       )}
     </div>
   )

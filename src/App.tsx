@@ -6,6 +6,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { PublicRoute } from './components/PublicRoute'
 import { LoadingSpinner } from './components/LoadingSpinner'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { ScrollToTop } from './components/ScrollToTop'
 
 // Lazy load pages for code splitting
 const HomePage = lazy(() => import('./pages/Home'))
@@ -34,6 +35,7 @@ function App() {
         <meta name="description" content="Comprehensive Islamic marriage preparation platform for engaged couples" />
       </Helmet>
 
+      <ScrollToTop />
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>}>
         <Routes>
           {/* Public routes - redirect authenticated users */}

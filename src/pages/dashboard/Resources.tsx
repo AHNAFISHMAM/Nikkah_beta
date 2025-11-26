@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
 import { SEO } from '../../components/SEO'
 import { PAGE_SEO } from '../../lib/seo'
 import { supabase } from '../../lib/supabase'
@@ -185,100 +186,230 @@ export default function ResourcesPage() {
         noIndex
       />
 
-      <div className="space-y-0.5 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold">Resources Library</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
+      {/* Header */}
+      <motion.div
+        className="space-y-0.5 sm:space-y-2"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0 }}
+      >
+        <motion.h1
+          className="text-2xl sm:text-3xl font-bold"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        >
+          Resources Library
+        </motion.h1>
+        <motion.p
+          className="text-sm sm:text-base text-muted-foreground"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
+        >
           Curated Islamic resources: books, scholarly articles, counseling, finance, duas, and courses
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
-      {Object.entries(categories).map(([category, categoryResources]) => {
+      {/* Categories */}
+      {Object.entries(categories).map(([category, categoryResources], categoryIndex) => {
         const config = categoryConfig[category] || { label: category, icon: FileText }
         const Icon = config.icon
 
         return (
-          <div key={category} className="space-y-3 sm:space-y-4">
-            <div className="flex items-center gap-2">
-              <Icon className="h-5 w-5 text-primary" />
+          <motion.div
+            key={category}
+            className="space-y-3 sm:space-y-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3, margin: "0px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <motion.div
+              className="flex items-center gap-2"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3, margin: "0px" }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                <Icon className="h-5 w-5 text-primary" />
+              </motion.div>
               <h2 className="text-lg sm:text-xl font-semibold">{config.label}</h2>
-            </div>
-            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+            </motion.div>
+            <motion.div
+              className="grid gap-3 sm:gap-4 sm:grid-cols-2"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2, margin: "0px" }}
+              variants={{
+                visible: {
+                  transition: {
+                    staggerChildren: 0.08,
+                    delayChildren: 0,
+                  },
+                },
+              }}
+            >
               {categoryResources.map((resource) => {
                 const isSystemFeatured = resource.is_featured
                 const isUserFavorite = isFavorite(resource.id)
                 const isHighlighted = isUserFavorite
 
                 return (
-                  <Card 
-                    key={resource.id} 
-                    className={cn(
-                      "hover:shadow-md transition-all duration-200 relative",
-                      isSystemFeatured && "border-primary/20",
-                      isHighlighted && "border-primary/40 bg-primary/10 shadow-sm"
-                    )}
+                  <motion.div
+                    key={resource.id}
+                    variants={{
+                      hidden: { 
+                        opacity: 0, 
+                        y: 30, 
+                        scale: 0.95,
+                        clipPath: "inset(0 100% 0 0)",
+                      },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        clipPath: "inset(0 0% 0 0)",
+                        transition: {
+                          duration: 0.8,
+                          ease: [0.6, -0.05, 0.01, 0.99],
+                        },
+                      },
+                    }}
+                    style={{ perspective: 1000 }}
                   >
-                    <CardHeader className="p-4 sm:p-6">
-                      <div className="flex items-start gap-2 sm:gap-3">
-                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                          <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <CardTitle className="text-sm sm:text-lg leading-tight flex-1">
-                              {resource.title}
-                            </CardTitle>
-                            {/* User Favorite Toggle */}
-                            <button
-                              onClick={(e) => handleToggleFavorite(resource.id, e)}
-                              disabled={toggleFavoriteMutation.isPending}
-                              className={cn(
-                                "p-1.5 rounded-md transition-all duration-200 hover:bg-accent shrink-0",
-                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                                "disabled:opacity-50 disabled:cursor-not-allowed",
-                                "touch-target-sm"
-                              )}
-                              aria-label={isUserFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                              title={isUserFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                            >
-                              <Star
-                                className={cn(
-                                  "h-4 w-4 sm:h-5 sm:w-5 transition-all duration-200",
-                                  isUserFavorite
-                                    ? "text-primary fill-primary scale-110"
-                                    : "text-muted-foreground hover:text-primary"
-                                )}
-                              />
-                            </button>
-                          </div>
-                          <CardDescription className="mt-0.5 sm:mt-1 line-clamp-2 text-xs sm:text-sm">
-                            {resource.description}
-                          </CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-4 sm:p-6 pt-0">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        asChild 
-                        className="min-h-[40px] sm:min-h-[36px] w-full sm:w-auto"
+                    <motion.div
+                      whileHover={{
+                        y: -6,
+                        scale: 1.02,
+                        transition: {
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 20,
+                        },
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                      className="h-full"
+                    >
+                      <Card 
+                        className={cn(
+                          "h-full relative overflow-hidden transition-all duration-200",
+                          isSystemFeatured && "border-primary/20",
+                          isHighlighted && "border-primary/40 bg-primary/10 shadow-sm"
+                        )}
                       >
-                        <a 
-                          href={resource.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          aria-label={`Open ${resource.title} in new tab`}
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          View Resource
-                        </a>
-                      </Button>
-                    </CardContent>
-                  </Card>
+                        {/* Awwwards-style gradient reveal overlay */}
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 opacity-0"
+                          whileHover={{ opacity: 1 }}
+                          transition={{ duration: 0.3 }}
+                        />
+                        {/* Shine effect */}
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
+                          whileHover={{ x: "200%" }}
+                          transition={{ duration: 0.6, ease: "easeInOut" }}
+                        />
+                        
+                        <CardHeader className="p-4 sm:p-6 relative z-10">
+                          <div className="flex items-start gap-2 sm:gap-3">
+                            <motion.div
+                              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
+                              whileHover={{
+                                scale: 1.1,
+                                rotate: 5,
+                                transition: { type: "spring", stiffness: 400, damping: 10 },
+                              }}
+                            >
+                              <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                            </motion.div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <CardTitle className="text-sm sm:text-lg leading-tight flex-1">
+                                  {resource.title}
+                                </CardTitle>
+                                {/* User Favorite Toggle */}
+                                <motion.button
+                                  onClick={(e) => handleToggleFavorite(resource.id, e)}
+                                  disabled={toggleFavoriteMutation.isPending}
+                                  className={cn(
+                                    "p-1.5 rounded-md transition-all duration-200 hover:bg-accent shrink-0",
+                                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                                    "disabled:opacity-50 disabled:cursor-not-allowed",
+                                    "touch-target-sm"
+                                  )}
+                                  aria-label={isUserFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                                  title={isUserFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                >
+                                  <motion.div
+                                    animate={{
+                                      scale: isUserFavorite ? [1, 1.2, 1] : 1,
+                                    }}
+                                    transition={{
+                                      scale: {
+                                        duration: 0.4,
+                                        times: [0, 0.5, 1],
+                                      },
+                                    }}
+                                  >
+                                    <Star
+                                      className={cn(
+                                        "h-4 w-4 sm:h-5 sm:w-5 transition-all duration-200",
+                                        isUserFavorite
+                                          ? "text-primary fill-primary"
+                                          : "text-muted-foreground hover:text-primary"
+                                      )}
+                                    />
+                                  </motion.div>
+                                </motion.button>
+                              </div>
+                              <CardDescription className="mt-0.5 sm:mt-1 line-clamp-2 text-xs sm:text-sm">
+                                {resource.description}
+                              </CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="p-4 sm:p-6 pt-0 relative z-10">
+                          <motion.div
+                            whileHover={{ x: 2 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                          >
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              asChild 
+                              className="min-h-[40px] sm:min-h-[36px] w-full sm:w-auto"
+                            >
+                              <a 
+                                href={resource.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                aria-label={`Open ${resource.title} in new tab`}
+                              >
+                                <motion.div
+                                  whileHover={{ rotate: -45 }}
+                                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                                >
+                                  <ExternalLink className="h-4 w-4 mr-2" />
+                                </motion.div>
+                                View Resource
+                              </a>
+                            </Button>
+                          </motion.div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  </motion.div>
                 )
               })}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )
       })}
 

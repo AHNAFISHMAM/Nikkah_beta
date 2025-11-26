@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { motion, AnimatePresence } from 'framer-motion'
 import { SEO } from '../../components/SEO'
 import { PAGE_SEO } from '../../lib/seo'
 import { supabase } from '../../lib/supabase'
@@ -200,16 +201,45 @@ export default function DiscussionsPage() {
         noIndex
       />
 
-      <div className="space-y-0.5 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold">Discussion Prompts</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
+      {/* Header */}
+      <motion.div
+        className="space-y-0.5 sm:space-y-2"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0 }}
+      >
+        <motion.h1
+          className="text-2xl sm:text-3xl font-bold"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        >
+          Discussion Prompts
+        </motion.h1>
+        <motion.p
+          className="text-sm sm:text-base text-muted-foreground"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
+        >
           Write your answers, share with your partner, and track your discussions
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
-      <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-r from-primary/10 via-islamic-gold/5 to-islamic-purple/10 p-4 sm:p-6 border border-primary/10">
+      {/* Info Banner */}
+      <motion.div
+        className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-r from-primary/10 via-islamic-gold/5 to-islamic-purple/10 p-4 sm:p-6 border border-primary/10"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.8 }}
+      >
         <div className="flex items-start gap-3 sm:gap-4">
-          <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-primary mt-0.5 sm:mt-1 shrink-0" />
+          <motion.div
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+          >
+            <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-primary mt-0.5 sm:mt-1 shrink-0" />
+          </motion.div>
           <div>
             <h3 className="font-semibold text-sm sm:text-base">How to Use These</h3>
             <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
@@ -218,12 +248,41 @@ export default function DiscussionsPage() {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {Object.entries(categories).map(([category, categoryPrompts]) => (
-        <div key={category} className="space-y-3 sm:space-y-4">
-          <h2 className="text-lg sm:text-xl font-semibold">{category}</h2>
-          <div className="grid gap-3 sm:gap-4">
+      {/* Categories */}
+      {Object.entries(categories).map(([category, categoryPrompts], categoryIndex) => (
+        <motion.div
+          key={category}
+          className="space-y-3 sm:space-y-4"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3, margin: "0px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          <motion.h2
+            className="text-lg sm:text-xl font-semibold"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3, margin: "0px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            {category}
+          </motion.h2>
+          <motion.div
+            className="grid gap-3 sm:gap-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2, margin: "0px" }}
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.08,
+                  delayChildren: 0,
+                },
+              },
+            }}
+          >
             {categoryPrompts.map((prompt) => {
               const userAnswer = getAnswerForPrompt(prompt.id)
               const partnerAnswer = getPartnerAnswerForPrompt(prompt.id)
@@ -232,28 +291,43 @@ export default function DiscussionsPage() {
               const isDiscussed = userAnswer?.is_discussed || false
 
               return (
-                <DiscussionPromptCard
+                <motion.div
                   key={prompt.id}
-                  prompt={prompt}
-                  userAnswer={userAnswer}
-                  partnerAnswer={partnerAnswer}
-                  partnerId={partnerId}
-                  isExpanded={isExpanded}
-                  onToggle={() => toggleExpanded(prompt.id)}
-                  onSave={(answer, isDiscussed, notes) => {
-                    saveAnswerMutation.mutate({
-                      promptId: prompt.id,
-                      answer,
-                      isDiscussed,
-                      notes,
-                    })
+                  variants={{
+                    hidden: { opacity: 0, y: 20, scale: 0.95 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      transition: {
+                        duration: 0.6,
+                        ease: "easeOut",
+                      },
+                    },
                   }}
-                  isLoading={saveAnswerMutation.isPending}
-                />
+                >
+                  <DiscussionPromptCard
+                    prompt={prompt}
+                    userAnswer={userAnswer}
+                    partnerAnswer={partnerAnswer}
+                    partnerId={partnerId}
+                    isExpanded={isExpanded}
+                    onToggle={() => toggleExpanded(prompt.id)}
+                    onSave={(answer, isDiscussed, notes) => {
+                      saveAnswerMutation.mutate({
+                        promptId: prompt.id,
+                        answer,
+                        isDiscussed,
+                        notes,
+                      })
+                    }}
+                    isLoading={saveAnswerMutation.isPending}
+                  />
+                </motion.div>
               )
             })}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       ))}
 
       {(!prompts || prompts.length === 0) && (
@@ -304,36 +378,55 @@ function DiscussionPromptCard({
     isDiscussed !== (userAnswer?.is_discussed || false)
 
   return (
-    <Card className={cn(
-      "transition-all duration-200",
-      isExpanded && "shadow-lg",
-      userAnswer?.is_discussed && "border-primary/30 bg-primary/5"
-    )}>
-      <CardHeader 
-        className="p-4 sm:p-6 cursor-pointer"
-        onClick={onToggle}
-      >
-        <div className="flex items-start gap-2 sm:gap-3">
-          <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 sm:mt-1 shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1">
-                <CardTitle className="text-sm sm:text-lg leading-tight">{prompt.title}</CardTitle>
-                <CardDescription className="mt-0.5 sm:mt-1 text-xs sm:text-sm">
-                  {prompt.description}
-                </CardDescription>
+    <motion.div
+      whileHover={{ y: -2 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <Card className={cn(
+        "transition-all duration-200 cursor-pointer",
+        isExpanded && "shadow-lg border-primary/20",
+        userAnswer?.is_discussed && "border-primary/30 bg-primary/5"
+      )}>
+        <CardHeader 
+          className="p-4 sm:p-6"
+          onClick={onToggle}
+        >
+          <div className="flex items-start gap-2 sm:gap-3">
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 sm:mt-1 shrink-0" />
+            </motion.div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1">
+                  <CardTitle className="text-sm sm:text-lg leading-tight">{prompt.title}</CardTitle>
+                  <CardDescription className="mt-0.5 sm:mt-1 text-xs sm:text-sm">
+                    {prompt.description}
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {userAnswer?.is_discussed && (
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                    >
+                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                    </motion.div>
+                  )}
+                  <motion.div
+                    animate={{ rotate: isExpanded ? 180 : 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    {isExpanded ? (
+                      <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                    )}
+                  </motion.div>
+                </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                {userAnswer?.is_discussed && (
-                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                )}
-                {isExpanded ? (
-                  <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
-                )}
-              </div>
-            </div>
             {(userAnswer?.answer || partnerAnswer) && (
               <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
                 {userAnswer?.answer && (
@@ -354,82 +447,133 @@ function DiscussionPromptCard({
         </div>
       </CardHeader>
 
-      {isExpanded && (
-        <CardContent className="p-4 sm:p-6 pt-0 space-y-4">
-          {/* Your Answer Section */}
-          <div className="space-y-2">
-            <Label htmlFor={`answer-${prompt.id}`} className="text-sm font-medium">
-              Your Answer
-            </Label>
-            <Textarea
-              id={`answer-${prompt.id}`}
-              placeholder="Write your thoughts and answer here..."
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              className="min-h-[120px]"
-            />
-          </div>
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+          >
+            <CardContent className="p-4 sm:p-6 pt-0 space-y-4">
+              {/* Your Answer Section */}
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                <Label htmlFor={`answer-${prompt.id}`} className="text-sm font-medium">
+                  Your Answer
+                </Label>
+                <Textarea
+                  id={`answer-${prompt.id}`}
+                  placeholder="Write your thoughts and answer here..."
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  className="min-h-[120px]"
+                />
+              </motion.div>
 
-          {/* Partner's Answer Section */}
-          {partnerId && partnerAnswer?.answer && (
-            <div className="space-y-2 p-3 sm:p-4 rounded-lg bg-muted/50 border border-border">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Partner's Answer
-              </Label>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {partnerAnswer.answer}
-              </p>
-              {partnerAnswer.is_discussed && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  ✓ Discussed on {new Date(partnerAnswer.discussed_at!).toLocaleDateString()}
-                </p>
-              )}
-            </div>
-          )}
+              {/* Partner's Answer Section */}
+              <AnimatePresence>
+                {partnerId && partnerAnswer?.answer && (
+                  <motion.div
+                    className="space-y-2 p-3 sm:p-4 rounded-lg bg-muted/50 border border-border"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Partner's Answer
+                    </Label>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {partnerAnswer.answer}
+                    </p>
+                    {partnerAnswer.is_discussed && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        ✓ Discussed on {new Date(partnerAnswer.discussed_at!).toLocaleDateString()}
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-          {/* Notes Section */}
-          <div className="space-y-2">
-            <Label htmlFor={`notes-${prompt.id}`} className="text-sm font-medium">
-              Discussion Notes
-            </Label>
-            <Textarea
-              id={`notes-${prompt.id}`}
-              placeholder="Add notes from your discussion with your partner..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="min-h-[100px]"
-            />
-          </div>
+              {/* Notes Section */}
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+              >
+                <Label htmlFor={`notes-${prompt.id}`} className="text-sm font-medium">
+                  Discussion Notes
+                </Label>
+                <Textarea
+                  id={`notes-${prompt.id}`}
+                  placeholder="Add notes from your discussion with your partner..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </motion.div>
 
-          {/* Mark as Discussed Checkbox */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <Checkbox
-              id={`discussed-${prompt.id}`}
-              checked={isDiscussed}
-              onChange={(e) => setIsDiscussed(e.target.checked)}
-              label="Mark as discussed"
-            />
-            {isDiscussed && userAnswer?.discussed_at && (
-              <span className="text-xs text-muted-foreground">
-                on {new Date(userAnswer.discussed_at).toLocaleDateString()}
-              </span>
-            )}
-          </div>
+              {/* Mark as Discussed Checkbox */}
+              <motion.div
+                className="flex items-center gap-2 flex-wrap"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+              >
+                <Checkbox
+                  id={`discussed-${prompt.id}`}
+                  checked={isDiscussed}
+                  onChange={(e) => setIsDiscussed(e.target.checked)}
+                  label="Mark as discussed"
+                />
+                <AnimatePresence>
+                  {isDiscussed && userAnswer?.discussed_at && (
+                    <motion.span
+                      className="text-xs text-muted-foreground"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      on {new Date(userAnswer.discussed_at).toLocaleDateString()}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.div>
 
-          {/* Save Button */}
-          {hasChanges && (
-            <Button
-              onClick={handleSave}
-              disabled={isLoading}
-              className="w-full sm:w-auto"
-            >
-              {isLoading ? 'Saving...' : 'Save Answer'}
-            </Button>
-          )}
-        </CardContent>
-      )}
+              {/* Save Button */}
+              <AnimatePresence>
+                {hasChanges && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Button
+                      onClick={handleSave}
+                      disabled={isLoading}
+                      className="w-full sm:w-auto"
+                    >
+                      {isLoading ? 'Saving...' : 'Save Answer'}
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </CardContent>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
+    </motion.div>
   )
 }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { SEO } from '../../components/SEO'
 import { PAGE_SEO } from '../../lib/seo'
 import { useProfile, useUpdateProfile } from '../../hooks/useProfile'
@@ -68,108 +69,242 @@ export default function ProfilePage() {
         noIndex
       />
 
-      <div className="space-y-0.5 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold">Profile</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
+      {/* Header Section */}
+      <motion.div
+        className="space-y-0.5 sm:space-y-2"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0 }}
+      >
+        <motion.h1
+          className="text-2xl sm:text-3xl font-bold"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+        >
+          Profile
+        </motion.h1>
+        <motion.p
+          className="text-sm sm:text-base text-muted-foreground"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
+        >
           Manage your account settings
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
       {/* Profile Info */}
-      <Card>
-        <CardHeader className="p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <User className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-              </div>
-              <div className="min-w-0">
-                <CardTitle className="text-base sm:text-lg">Personal Information</CardTitle>
-                <CardDescription className="text-xs sm:text-sm truncate">{user?.email}</CardDescription>
-              </div>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.6 }}
+      >
+        <Card>
+          <CardHeader className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+              <motion.div
+                className="flex items-center gap-3"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut', delay: 0.8 }}
+              >
+                <motion.div
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
+                  <User className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                </motion.div>
+                <div className="min-w-0">
+                  <CardTitle className="text-base sm:text-lg">Personal Information</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm truncate">{user?.email}</CardDescription>
+                </div>
+              </motion.div>
+              <AnimatePresence mode="wait">
+                {!isEditing && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button variant="outline" onClick={() => setIsEditing(true)} className="min-h-[44px] w-full sm:w-auto">
+                        Edit
+                      </Button>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-            {!isEditing && (
-              <Button variant="outline" onClick={() => setIsEditing(true)} className="min-h-[44px] w-full sm:w-auto">
-                Edit
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6 pt-0">
-          {isEditing ? (
-            <div className="space-y-3 sm:space-y-4">
-              <div className="grid gap-3 sm:gap-4 grid-cols-2">
-                <div className="space-y-1.5 sm:space-y-2">
-                  <Label htmlFor="firstName" className="text-xs sm:text-sm">First Name</Label>
-                  <Input
-                    id="firstName"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="h-11 sm:h-10 text-base sm:text-sm"
-                  />
-                </div>
-                <div className="space-y-1.5 sm:space-y-2">
-                  <Label htmlFor="lastName" className="text-xs sm:text-sm">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="h-11 sm:h-10 text-base sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div className="space-y-1.5 sm:space-y-2">
-                <Label htmlFor="partnerName" className="text-xs sm:text-sm">Partner's Name</Label>
-                <Input
-                  id="partnerName"
-                  value={partnerName}
-                  onChange={(e) => setPartnerName(e.target.value)}
-                  className="h-11 sm:h-10 text-base sm:text-sm"
-                />
-              </div>
-              <div className="space-y-1.5 sm:space-y-2">
-                <Label htmlFor="weddingDate" className="text-xs sm:text-sm">Wedding Date</Label>
-                <Input
-                  id="weddingDate"
-                  type="date"
-                  value={weddingDate}
-                  onChange={(e) => setWeddingDate(e.target.value)}
-                  className="h-11 sm:h-10 text-base sm:text-sm"
-                />
-              </div>
-              <div className="flex gap-2 pt-2">
-                <Button onClick={handleSave} disabled={updateProfile.isPending} className="flex-1 sm:flex-none min-h-[44px]">
-                  {updateProfile.isPending ? 'Saving...' : 'Save'}
-                </Button>
-                <Button variant="outline" onClick={() => setIsEditing(false)} className="flex-1 sm:flex-none min-h-[44px]">
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3 sm:space-y-4">
-              <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3">
-                <div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Name</p>
-                  <p className="font-medium text-sm sm:text-base">
-                    {firstName} {lastName}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Partner</p>
-                  <p className="font-medium text-sm sm:text-base">{partnerName || 'Not set'}</p>
-                </div>
-                <div className="col-span-2 sm:col-span-1">
-                  <p className="text-xs sm:text-sm text-muted-foreground">Wedding Date</p>
-                  <p className="font-medium text-sm sm:text-base">
-                    {weddingDate ? new Date(weddingDate).toLocaleDateString() : 'Not set'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6 pt-0">
+            <AnimatePresence mode="wait">
+              {isEditing ? (
+                <motion.div
+                  key="edit"
+                  initial={{ opacity: 0, y: 20, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: -20, height: 0 }}
+                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  className="space-y-3 sm:space-y-4"
+                >
+                  <motion.div
+                    className="grid gap-3 sm:gap-4 grid-cols-2"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                      hidden: { opacity: 0 },
+                      visible: {
+                        opacity: 1,
+                        transition: {
+                          staggerChildren: 0.1,
+                          delayChildren: 0.1,
+                        },
+                      },
+                    }}
+                  >
+                    <motion.div
+                      className="space-y-1.5 sm:space-y-2"
+                      variants={{
+                        hidden: { opacity: 0, x: -20 },
+                        visible: { opacity: 1, x: 0 },
+                      }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                    >
+                      <Label htmlFor="firstName" className="text-xs sm:text-sm">First Name</Label>
+                      <Input
+                        id="firstName"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className="h-11 sm:h-10 text-base sm:text-sm"
+                      />
+                    </motion.div>
+                    <motion.div
+                      className="space-y-1.5 sm:space-y-2"
+                      variants={{
+                        hidden: { opacity: 0, x: -20 },
+                        visible: { opacity: 1, x: 0 },
+                      }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                    >
+                      <Label htmlFor="lastName" className="text-xs sm:text-sm">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        className="h-11 sm:h-10 text-base sm:text-sm"
+                      />
+                    </motion.div>
+                  </motion.div>
+                  <motion.div
+                    className="space-y-1.5 sm:space-y-2"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: 'easeOut', delay: 0.3 }}
+                  >
+                    <Label htmlFor="partnerName" className="text-xs sm:text-sm">Partner's Name</Label>
+                    <Input
+                      id="partnerName"
+                      value={partnerName}
+                      onChange={(e) => setPartnerName(e.target.value)}
+                      className="h-11 sm:h-10 text-base sm:text-sm"
+                    />
+                  </motion.div>
+                  <motion.div
+                    className="space-y-1.5 sm:space-y-2"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: 'easeOut', delay: 0.4 }}
+                  >
+                    <Label htmlFor="weddingDate" className="text-xs sm:text-sm">Wedding Date</Label>
+                    <Input
+                      id="weddingDate"
+                      type="date"
+                      value={weddingDate}
+                      onChange={(e) => setWeddingDate(e.target.value)}
+                      className="h-11 sm:h-10 text-base sm:text-sm"
+                    />
+                  </motion.div>
+                  <motion.div
+                    className="flex gap-2 pt-2"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: 'easeOut', delay: 0.5 }}
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex-1 sm:flex-none"
+                    >
+                      <Button onClick={handleSave} disabled={updateProfile.isPending} className="flex-1 sm:flex-none min-h-[44px] w-full">
+                        {updateProfile.isPending ? 'Saving...' : 'Save'}
+                      </Button>
+                    </motion.div>
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex-1 sm:flex-none"
+                    >
+                      <Button variant="outline" onClick={() => setIsEditing(false)} className="flex-1 sm:flex-none min-h-[44px] w-full">
+                        Cancel
+                      </Button>
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="view"
+                  initial={{ opacity: 0, y: 20, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: -20, height: 0 }}
+                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  className="space-y-3 sm:space-y-4"
+                >
+                  <motion.div
+                    className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                      hidden: { opacity: 0 },
+                      visible: {
+                        opacity: 1,
+                        transition: {
+                          staggerChildren: 0.1,
+                          delayChildren: 0.1,
+                        },
+                      },
+                    }}
+                  >
+                    {[
+                      { label: 'Name', value: `${firstName} ${lastName}` },
+                      { label: 'Partner', value: partnerName || 'Not set' },
+                      { label: 'Wedding Date', value: weddingDate ? new Date(weddingDate).toLocaleDateString() : 'Not set', span: 'col-span-2 sm:col-span-1' },
+                    ].map((item, index) => (
+                      <motion.div
+                        key={item.label}
+                        className={item.span || ''}
+                        variants={{
+                          hidden: { opacity: 0, y: 20 },
+                          visible: { opacity: 1, y: 0 },
+                        }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                      >
+                        <p className="text-xs sm:text-sm text-muted-foreground">{item.label}</p>
+                        <p className="font-medium text-sm sm:text-base">{item.value}</p>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Theme Settings - Hidden for now */}
       {/* <Card>
@@ -200,17 +335,42 @@ export default function ProfilePage() {
       </Card> */}
 
       {/* Sign Out */}
-      <Card>
-        <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-          <CardTitle className="text-base sm:text-lg">Account</CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6 pt-0">
-          <Button variant="destructive" onClick={handleSignOut} className="min-h-[44px] w-full sm:w-auto">
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
-        </CardContent>
-      </Card>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
+      >
+        <Card>
+          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: 'easeOut', delay: 1 }}
+            >
+              <CardTitle className="text-base sm:text-lg">Account</CardTitle>
+            </motion.div>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6 pt-0">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: 'easeOut', delay: 1.2 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button variant="destructive" onClick={handleSignOut} className="min-h-[44px] w-full sm:w-auto">
+                <motion.div
+                  className="flex items-center"
+                  whileHover={{ x: 2 }}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </motion.div>
+              </Button>
+            </motion.div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   )
 }

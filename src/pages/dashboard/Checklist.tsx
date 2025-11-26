@@ -1,11 +1,12 @@
 import { useMemo, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { SEO } from '../../components/SEO'
 import { PAGE_SEO } from '../../lib/seo'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { useConfetti } from '../../hooks/useConfetti'
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
+import { Card, CardContent, CardHeader } from '../../components/ui/card'
 import { Checkbox } from '../../components/ui/checkbox'
 import { Progress } from '../../components/ui/progress'
 import { Skeleton } from '../../components/ui/skeleton'
@@ -37,7 +38,7 @@ interface UserChecklistStatus {
 export default function ChecklistPage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
-  const { triggerConfetti, triggerFireworks } = useConfetti()
+  const { triggerConfetti } = useConfetti()
 
   const { data, isLoading } = useQuery({
     queryKey: ['checklist', user?.id],
@@ -193,19 +194,82 @@ export default function ChecklistPage() {
         <PrintButton />
       </div>
 
+      {/* Spacer to ensure elements start below viewport */}
+      <div className="h-4" />
+
       {/* Progress Card */}
-      <Card>
-        <CardContent className="p-4 sm:pt-6 sm:p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs sm:text-sm font-medium">Overall Progress</span>
-            <span className="text-sm sm:text-base font-bold text-primary">{progress}%</span>
-          </div>
-          <Progress value={progress} variant="islamic" size="md" />
-          <p className="text-[10px] sm:text-xs text-muted-foreground mt-2">
-            {completedCount} of {totalItems} items completed
-          </p>
-        </CardContent>
-      </Card>
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3, margin: "150px 0px 0px 0px" }} // Trigger when 30% visible, with 150px top margin (triggers when first category card is visible)
+        variants={{
+          hidden: {}, // No animation for parent container
+          visible: {
+            transition: {
+              staggerChildren: 0.4, // 400ms stagger between children
+              delayChildren: 0.3, // 300ms initial delay before children start animating
+            },
+          },
+        }}
+      >
+        <Card>
+          <CardContent className="p-4 sm:pt-6 sm:p-6">
+            {/* Wrapper motion.div to maintain variant inheritance chain - must also use whileInView since Card breaks the chain */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3, margin: "150px 0px 0px 0px" }}
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.4, // 400ms stagger between direct children
+                    delayChildren: 0.1, // 100ms delay before children start
+                  },
+                },
+              }}
+            >
+              <motion.div 
+                className="flex items-center justify-between mb-2"
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+              >
+                <span className="text-xs sm:text-sm font-medium">Overall Progress</span>
+                <motion.span
+                  className="text-sm sm:text-base font-bold text-primary"
+                  key={progress}
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: { opacity: 1 },
+                  }}
+                >
+                  {progress}%
+                </motion.span>
+              </motion.div>
+              <motion.div
+                key={progress}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: { opacity: 1 },
+                }}
+              >
+                <Progress value={progress} variant="islamic" size="md" />
+              </motion.div>
+              <motion.p
+                className="text-[10px] sm:text-xs text-muted-foreground mt-2"
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+              >
+                {completedCount} of {totalItems} items completed
+              </motion.p>
+            </motion.div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Categories */}
       <div className="space-y-4 sm:space-y-6">
@@ -217,51 +281,277 @@ export default function ChecklistPage() {
           if (categoryItems.length === 0) return null
 
           return (
-            <Card key={category.id}>
-              <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-                <CardTitle className="flex items-center justify-between text-base sm:text-lg">
-                  <span>{category.name}</span>
-                  <span className="text-xs sm:text-sm font-normal text-muted-foreground">
-                    {categoryCompleted}/{categoryItems.length}
-                  </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6 pt-0">
-                {categoryItems.map((item) => {
-                  const completed = isItemCompleted(item.id)
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex items-start gap-3 p-3 sm:p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer active:bg-accent/80 min-h-[56px] touch-target-auto"
-                      onClick={() => handleToggle(item.id)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => e.key === 'Enter' && handleToggle(item.id)}
+            <motion.div
+              key={category.id}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3, margin: "50px 0px 0px 0px" }} // Trigger when 30% visible, with 50px top margin (each card animates individually)
+              variants={{
+                hidden: { 
+                  opacity: 0, 
+                  y: 30, 
+                  scale: 0.95,
+                },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: {
+                    duration: 1.2,
+                    ease: [0.6, -0.05, 0.01, 0.99], // Custom easing curve for smooth reveal
+                    staggerChildren: 0.3, // 300ms stagger between children
+                    delayChildren: 0.2, // 200ms initial delay before children start animating
+                  },
+                },
+              }}
+              style={{ perspective: 1000 }} // 3D perspective for depth
+            >
+              <motion.div
+                variants={{
+                  hidden: { rotateX: -5, opacity: 0 },
+                  visible: { 
+                    rotateX: 0, 
+                    opacity: 1,
+                    transition: {
+                      duration: 1.2,
+                      ease: [0.6, -0.05, 0.01, 0.99],
+                    },
+                  },
+                }}
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <Card className="overflow-hidden relative">
+                  {/* Awwwards-style gradient reveal overlay */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-islamic-gold/20 pointer-events-none z-10"
+                    variants={{
+                      hidden: { opacity: 0, x: "-100%" },
+                      visible: { 
+                        opacity: 1, 
+                        x: "100%",
+                        transition: {
+                          duration: 1.5,
+                          ease: "easeInOut",
+                          delay: 0.3,
+                        },
+                      },
+                    }}
+                  />
+                <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+                  <motion.div
+                    className="flex items-center justify-between text-base sm:text-lg"
+                    variants={{
+                      hidden: { opacity: 0, y: 10 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        transition: {
+                          duration: 1, // Slower header animation (best practice: 1-1.5s for visible animations)
+                          ease: "easeOut",
+                        },
+                      },
+                    }}
+                  >
+                    <span>{category.name}</span>
+                    <motion.span
+                      className="text-xs sm:text-sm font-normal text-muted-foreground"
+                      key={`${category.id}-${categoryCompleted}`}
+                      variants={{
+                        hidden: { scale: 1.2, opacity: 0 },
+                        visible: {
+                          scale: 1,
+                          opacity: 1,
+                          transition: {
+                            duration: 1.2, // Slower count badge animation (best practice: 1-1.5s for scale animations)
+                            ease: "easeOut",
+                          },
+                        },
+                      }}
                     >
-                      <Checkbox
-                        checked={completed}
-                        onChange={() => {}}
-                        className="mt-0.5 h-5 w-5 sm:h-4 sm:w-4"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm sm:text-base font-medium ${completed ? 'line-through text-muted-foreground' : ''}`}>
-                          {item.title}
-                        </p>
-                        {item.description && (
-                          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1 line-clamp-2">
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-              </CardContent>
-            </Card>
+                      {categoryCompleted}/{categoryItems.length}
+                    </motion.span>
+                  </motion.div>
+                </CardHeader>
+                <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6 pt-0">
+                  <motion.div
+                    variants={{
+                      hidden: {},
+                      visible: {
+                        transition: {
+                          staggerChildren: 0.15, // 150ms stagger between items (best practice: 100-200ms for list items)
+                          delayChildren: 0.1, // 100ms delay before items start animating
+                        },
+                      },
+                    }}
+                  >
+                    {categoryItems.map((item, itemIndex) => {
+                      const completed = isItemCompleted(item.id)
+                      return (
+                        <ChecklistItem
+                          key={item.id}
+                          item={item}
+                          completed={completed}
+                          onToggle={() => handleToggle(item.id)}
+                          index={itemIndex}
+                        />
+                      )
+                    })}
+                  </motion.div>
+                </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
           )
         })}
       </div>
     </div>
+  )
+}
+
+interface ChecklistItemProps {
+  item: ChecklistItem
+  completed: boolean
+  onToggle: () => void
+  index: number
+}
+
+function ChecklistItem({ item, completed, onToggle }: ChecklistItemProps) {
+  return (
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, x: -20, scale: 0.95 },
+        visible: {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          transition: {
+            duration: 0.8, // Slower item animation (best practice: 0.8-1s for list items)
+            ease: "easeOut",
+          },
+        },
+      }}
+      layout
+      animate={{
+        opacity: completed ? 0.7 : 1,
+        scale: completed ? 0.98 : 1,
+      }}
+    >
+      <motion.div
+        className="flex items-start gap-3 p-3 sm:p-3 rounded-lg border hover:bg-accent/50 cursor-pointer active:bg-accent/80 min-h-[56px] touch-target-auto relative overflow-hidden group"
+        onClick={onToggle}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && onToggle()}
+        whileHover={{
+          x: 4,
+          transition: {
+            type: "spring",
+            stiffness: 400,
+            damping: 17,
+          },
+        }}
+        whileTap={{ scale: 0.98 }}
+      >
+        {/* Background color on hover */}
+        <motion.div
+          className="absolute inset-0 bg-accent rounded-lg"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+        />
+
+        {/* Checkbox with animation */}
+        <motion.div
+          className="mt-0.5 relative z-10"
+          initial={false}
+          animate={{
+            scale: completed ? [1, 1.2, 1] : 1,
+          }}
+          transition={{
+            scale: {
+              duration: 0.4,
+              times: [0, 0.5, 1],
+            },
+          }}
+        >
+          <Checkbox
+            checked={completed}
+            onChange={() => {}}
+            className="h-5 w-5 sm:h-4 sm:w-4"
+          />
+        </motion.div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0 relative z-10">
+          <motion.p
+            className={`text-sm sm:text-base font-medium ${completed ? 'line-through text-muted-foreground' : ''}`}
+            animate={{
+              opacity: completed ? 0.6 : 1,
+            }}
+            transition={{ duration: 0.3 }}
+          >
+            {item.title}
+          </motion.p>
+          {item.description && (
+            <motion.p
+              className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1 line-clamp-2"
+              animate={{
+                opacity: completed ? 0.5 : 1,
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              {item.description}
+            </motion.p>
+          )}
+        </div>
+
+        {/* Completion indicator */}
+        <AnimatePresence>
+          {completed && (
+            <motion.div
+              className="absolute right-3 top-3 z-10"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: 180 }}
+              transition={{
+                type: "spring",
+                stiffness: 200,
+                damping: 15,
+              }}
+            >
+              <motion.div
+                className="h-6 w-6 rounded-full bg-success/20 flex items-center justify-center"
+                animate={{
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 0.5,
+                  repeat: Infinity,
+                  repeatDelay: 2,
+                }}
+              >
+                <motion.svg
+                  className="h-4 w-4 text-success"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                >
+                  <motion.path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </motion.svg>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
   )
 }
 

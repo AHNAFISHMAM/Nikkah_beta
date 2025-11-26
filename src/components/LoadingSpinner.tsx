@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { cn } from '../lib/utils'
 
 interface LoadingSpinnerProps {
@@ -28,25 +29,36 @@ export function LoadingSpinner({
   className
 }: LoadingSpinnerProps) {
   return (
-    <div className={cn('flex flex-col items-center justify-center gap-3 p-8', className)}>
-      <div
+    <motion.div
+      className={cn('flex flex-col items-center justify-center gap-3 p-8', className)}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+    >
+      <motion.div
         className={cn(
-          'animate-spin rounded-full',
+          'rounded-full',
           sizeClasses[size],
           variant === 'islamic' && 'border-islamic-gold/20 border-t-islamic-gold',
           variant === 'default' && 'border-primary/20 border-t-primary',
           variant === 'minimal' && 'border-muted-foreground/20 border-t-muted-foreground'
         )}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
       />
       {text && (
-        <p className={cn(
-          'text-muted-foreground animate-pulse',
-          textSizeClasses[size]
-        )}>
+        <motion.p
+          className={cn(
+            'text-muted-foreground',
+            textSizeClasses[size]
+          )}
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        >
           {text}
-        </p>
+        </motion.p>
       )}
-    </div>
+    </motion.div>
   )
 }
 

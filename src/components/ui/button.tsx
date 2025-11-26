@@ -1,4 +1,5 @@
 import * as React from "react"
+import { motion } from "framer-motion"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Loader2 } from "lucide-react"
@@ -47,23 +48,46 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, loading = false, children, disabled, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+    const Comp = asChild ? Slot : motion.button
+
+    const buttonContent = loading ? (
+      <>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+        >
+          <Loader2 className="h-4 w-4" />
+        </motion.div>
+        <span>{typeof children === 'string' ? children : 'Loading...'}</span>
+      </>
+    ) : (
+      children
+    )
+
+    if (asChild) {
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          disabled={disabled || loading}
+          {...props}
+        >
+          {buttonContent}
+        </Comp>
+      )
+    }
 
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         disabled={disabled || loading}
+        whileHover={!disabled && !loading ? { scale: 1.02, y: -1 } : {}}
+        whileTap={!disabled && !loading ? { scale: 0.98 } : {}}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         {...props}
       >
-        {loading ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>{typeof children === 'string' ? children : 'Loading...'}</span>
-          </>
-        ) : (
-          children
-        )}
+        {buttonContent}
       </Comp>
     )
   }

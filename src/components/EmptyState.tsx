@@ -1,3 +1,4 @@
+import { motion } from "framer-motion"
 import { type LucideIcon } from "lucide-react"
 import { cn } from "../lib/utils"
 import { Button } from "./ui/button"
@@ -21,21 +22,52 @@ export function EmptyState({
   className
 }: EmptyStateProps) {
   return (
-    <div className={cn(
-      "flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in",
-      className
-    )}>
-      <div className="w-16 h-16 rounded-full bg-islamic-gold/10 flex items-center justify-center mb-4">
-        <Icon className="h-8 w-8 text-islamic-gold" />
-      </div>
-      <h3 className="font-semibold text-lg mb-2">{title}</h3>
-      <p className="text-muted-foreground mb-6 max-w-sm">{description}</p>
-      {action && (
-        <Button onClick={action.onClick} variant="warm">
-          {action.label}
-        </Button>
+    <motion.div
+      className={cn(
+        "flex flex-col items-center justify-center py-12 px-4 text-center",
+        className
       )}
-    </div>
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
+      <motion.div
+        className="w-16 h-16 rounded-full bg-islamic-gold/10 flex items-center justify-center mb-4"
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+        whileHover={{ scale: 1.1, rotate: 5 }}
+      >
+        <Icon className="h-8 w-8 text-islamic-gold" />
+      </motion.div>
+      <motion.h3
+        className="font-semibold text-lg mb-2"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
+      >
+        {title}
+      </motion.h3>
+      <motion.p
+        className="text-muted-foreground mb-6 max-w-sm"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
+      >
+        {description}
+      </motion.p>
+      {action && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4, ease: 'easeOut' }}
+        >
+          <Button onClick={action.onClick} variant="warm">
+            {action.label}
+          </Button>
+        </motion.div>
+      )}
+    </motion.div>
   )
 }
 
@@ -56,16 +88,47 @@ export function EmptyStateCustom({
   className
 }: EmptyStateCustomProps) {
   return (
-    <div className={cn(
-      "flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in",
-      className
-    )}>
-      <div className="w-16 h-16 rounded-full bg-islamic-gold/10 flex items-center justify-center mb-4">
+    <motion.div
+      className={cn(
+        "flex flex-col items-center justify-center py-12 px-4 text-center",
+        className
+      )}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
+      <motion.div
+        className="w-16 h-16 rounded-full bg-islamic-gold/10 flex items-center justify-center mb-4"
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+        whileHover={{ scale: 1.1, rotate: 5 }}
+      >
         <Icon className="h-8 w-8 text-islamic-gold" />
-      </div>
-      <h3 className="font-semibold text-lg mb-2">{title}</h3>
-      <p className="text-muted-foreground mb-6 max-w-sm">{description}</p>
-      {children}
-    </div>
+      </motion.div>
+      <motion.h3
+        className="font-semibold text-lg mb-2"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
+      >
+        {title}
+      </motion.h3>
+      <motion.p
+        className="text-muted-foreground mb-6 max-w-sm"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
+      >
+        {description}
+      </motion.p>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4, ease: 'easeOut' }}
+      >
+        {children}
+      </motion.div>
+    </motion.div>
   )
 }
