@@ -1,0 +1,25 @@
+# Code Owners
+# This file defines code ownership for the repository
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for all files
+* @AHNAFISHMAM
+
+# Source code
+/src/ @AHNAFISHMAM
+
+# Configuration files
+/.github/ @AHNAFISHMAM
+/package.json @AHNAFISHMAM
+/vite.config.ts @AHNAFISHMAM
+/tsconfig.json @AHNAFISHMAM
+
+# Documentation
+/README.md @AHNAFISHMAM
+/CONTRIBUTING.md @AHNAFISHMAM
+/docs/ @AHNAFISHMAM
+
+# Database migrations
+/migrations/ @AHNAFISHMAM
+/supabase-*.sql @AHNAFISHMAM
+
