@@ -11,7 +11,9 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify": "node scripts/verify-setup.js",
+    "github:status": "node scripts/check-github-status.js"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
