@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, memo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
@@ -49,7 +49,7 @@ const GOAL_TYPES = [
   },
 ] as const
 
-export function SavingsGoals() {
+function SavingsGoalsComponent() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const { triggerStars } = useConfetti()
@@ -628,3 +628,4 @@ function SavingsGoalsSkeleton() {
   )
 }
 
+export const SavingsGoals = memo(SavingsGoalsComponent)

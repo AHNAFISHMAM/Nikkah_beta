@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, memo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
@@ -46,7 +46,7 @@ const STATUS_CONFIG = {
   },
 } as const
 
-export function MahrTracker() {
+function MahrTrackerComponent() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const { triggerStars } = useConfetti()
@@ -481,3 +481,4 @@ function MahrSkeleton() {
   )
 }
 
+export const MahrTracker = memo(MahrTrackerComponent)

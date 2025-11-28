@@ -643,15 +643,7 @@ export default function ModuleDetailPage() {
                     transition={{ duration: 0.5, ease: 'easeOut' }}
                     whileHover={{ x: 5 }}
                   >
-                    <motion.div
-                      className="h-1.5 w-1.5 rounded-full bg-warning mt-2 shrink-0"
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.3, delay: index * 0.1 + 0.3 }}
-                      animate={{ scale: [1, 1.3, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 3, delay: index * 0.2 }}
-                    />
+                    <div className="h-1.5 w-1.5 rounded-full bg-warning mt-2 shrink-0" />
                     <span>{takeaway}</span>
                   </motion.li>
                 ))}

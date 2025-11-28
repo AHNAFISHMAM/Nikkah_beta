@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, memo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
@@ -44,7 +44,7 @@ const WEDDING_CATEGORIES = [
   { key: 'other', label: 'Other Expenses', icon: '📋' },
 ] as const
 
-export function WeddingBudget() {
+function WeddingBudgetComponent() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const { triggerStars } = useConfetti()
@@ -609,3 +609,4 @@ function WeddingBudgetSkeleton() {
   )
 }
 
+export const WeddingBudget = memo(WeddingBudgetComponent)

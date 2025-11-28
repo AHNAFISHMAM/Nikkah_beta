@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, memo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
@@ -61,7 +61,7 @@ const EXPENSE_CATEGORIES = [
   { key: 'expense_charity', label: 'Charity', color: COLORS[10] },
 ] as const
 
-export function BudgetCalculator() {
+function BudgetCalculatorComponent() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const { triggerStars } = useConfetti()
@@ -668,3 +668,4 @@ function BudgetSkeleton() {
   )
 }
 
+export const BudgetCalculator = memo(BudgetCalculatorComponent)
